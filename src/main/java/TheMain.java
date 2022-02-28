@@ -16,7 +16,8 @@ public class TheMain {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        new FirstClass(7, 7,1);
+        new Intro().setVisible(true);
+        //new FirstClass(7, 7,1);
         
         
     }
@@ -47,5 +48,5 @@ public class TheMain {
             
     
     }
-    
+
 }
