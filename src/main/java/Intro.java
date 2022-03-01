@@ -180,6 +180,7 @@ private int columns=5,rows=5;
         //System.out.println("     "+rows+"     "+columns);
         if(rows>0&&rows<20&&columns>0&&columns<20)
         new FirstClass(columns, rows, 2);
+        //Intro.setDefaultLookAndFeelDecorated(true);
         
         
     }//GEN-LAST:event_jButton1ActionPerformed
