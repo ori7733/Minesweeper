@@ -35,10 +35,9 @@ public class FirstClass implements ActionListener , MouseListener{
     private JButton[][] btnArr;
     private boolean firstStep=true;
     private JMenuBar mb;
-    private JMenu file=new JMenu(getTimerSt()+ "  mines left: "+remainingMines);
+    private JMenu file;
+    private int lastStep=0;
 
-    
- 
     int elapsedTime = 0;
     int seconds = 0;
     int minutes = 0;
@@ -53,8 +52,11 @@ public class FirstClass implements ActionListener , MouseListener{
 
         public void actionPerformed(ActionEvent e) {
 
-            frame.setTitle(getTimerSt()+ "  mines : "+remainingMines);
-            
+            frame.setTitle(getTimerSt()+ "  mines : "+remainingMines);     
+            if(seconds-lastStep>5){
+                recommendStep();
+                lastStep=seconds;
+            }
             //frame.setMenuBar(getTimerSt()+ "  mines : "+remainingMines);
             /*
             mb=new JMenuBar();
@@ -63,10 +65,8 @@ public class FirstClass implements ActionListener , MouseListener{
             file.setDelay(1);
             file.setBackground(Color.GREEN);
             mb.add(file);
-            */
-                                        
+            */                                       
         }
-
     });
     private String getTimerSt(){
         elapsedTime = elapsedTime + 1000;
@@ -91,7 +91,7 @@ public class FirstClass implements ActionListener , MouseListener{
         newGame(this.level);
         init();
     }
-    //set the level of the game- the hiher thr number the bigger the num of the mins
+    //set the level of the game- the hiher thr number the bigger the numbe of the mins
     private int setLevel(int level){
         switch(level)
         {
@@ -120,21 +120,21 @@ public class FirstClass implements ActionListener , MouseListener{
             //btn.setActionCommand(""+posY);
             //btn.addActionListener(this);
             btn.addMouseListener(this);
-            btn.setFont(new Font("Agency FB", Font.PLAIN, 40));
+            btn.setFont(new Font("Agency FB", Font.PLAIN, 38));
             btn.setName(""+i);     
             this.frame.add(btn);
             this.btnArr[i/lineX][i%lineX] = btn;      
         }
-        this.frame.setSize(1200,1200);
+        this.frame.setSize(2000,2000);
         this.frame.setVisible(true);
         this.btnArr[0][0].setBackground(Color.BLUE);
         this.btnArr[0][0].setBackground(new JButton().getBackground());
-        //mb=new JMenuBar();
-        //frame.setJMenuBar(mb);        
-        //file.setBackground(Color.GREEN);
-        //mb.add(file);
-    }  
-    
+        mb=new JMenuBar();
+        file=new JMenu("next step");
+        frame.setJMenuBar(mb);        
+        file.setBackground(Color.GREEN);
+        mb.add(file);
+    }     
     
     //return an random numnber 1-50 
     private int myRND(){
@@ -147,8 +147,7 @@ public class FirstClass implements ActionListener , MouseListener{
             for (int j = 0; j < lineX; j++) {
                 board[i][j]=num;
             }
-    }
-  
+    }  
     
     //
     private void newGame(int level){
@@ -213,37 +212,32 @@ public class FirstClass implements ActionListener , MouseListener{
     private void recommendStep(){
         for (int posY = 0; posY < lineY; posY++) 
             for (int posX = 0; posX < lineX; posX++) {
-                if(this.dataBoard[posY][posX]!=-1&&this.dataBoard[posY][posX]!=-2)
+                if(this.dataBoard[posY][posX]>0)
                 {
-                    recommendFUCK(posY,posX,this.dataBoard[posY][posX]);
+                    if(recommendFUCK(posY,posX,this.dataBoard[posY][posX]))
+                        return;
                 }
             }
-        
     }
-    private void recommendFUCK(int posY,int posX,int number){
+    private boolean recommendFUCK(int posY,int posX,int number){
         int count=0;
-        int num=this.dataBoard[posY][posX];
         for (int i = posY-1; i < posY+2; i++) 
             for (int j = posX-1; j < posX+2; j++){
-                if ((i<0||i>lineY-1||j<0||j>lineX-1)||(posY==i&&posX==j||dataBoard[i][j]!=-1))          
+                if ((i<0||i>lineY-1||j<0||j>lineX-1)||(posY==i&&posX==j||dataBoard[i][j]>-1))          
                     continue;
-                if(this.dataBoard[i][j]==-2)
-                    num--;
                 count++;
         }
-        if(dataBoard[posY][posX]==count)
+        if(number==count)
         for (int i = posY-1; i < posY+2; i++){
             for (int j = posX-1; j < posX+2; j++){
                 if ((i<0||i>lineY-1||j<0||j>lineX-1)||(posY==i&&posX==j||dataBoard[i][j]!=-1||this.btnArr[i][j].getBackground()==Color.ORANGE))          
                     continue;
                 this.btnArr[i][j].setBackground(Color.ORANGE);
-                //return;
+                return true;
             }
         }
-        
-            
-    }
-    
+        return false;
+    }  
     
         
     private void endGame(boolean iswin) {
@@ -319,7 +313,7 @@ public class FirstClass implements ActionListener , MouseListener{
       //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     private void leftClick(int posY,int posX){
-        while (this.firstStep&&this.gameBoard[posY][posX]==boom){     
+        while (this.firstStep&&this.gameBoard[posY][posX]!=0){     
             newGame(level);
         }
         timer.start();
@@ -327,7 +321,8 @@ public class FirstClass implements ActionListener , MouseListener{
         //System.out.println(getTimerSt());
         if(this.gameBoard[posY][posX]==boom){
             this.btnArr[posY][posX].setBackground(Color.red);
-            this.btnArr[posY][posX].setText("BOOM!");
+            this.btnArr[posY][posX].setFont(new Font("Agency FB", Font.PLAIN, 30));
+            this.btnArr[posY][posX].setText("BOOM");
             this.btnArr[posY][posX].getModel().setPressed(true);
             this.dataBoard[posY][posX]=9;
             endGame(false);
@@ -337,7 +332,10 @@ public class FirstClass implements ActionListener , MouseListener{
             if(this.dataBoard[posY][posX]==-1)
                 this.numToDiscovered--;
             this.btnArr[posY][posX].setBackground(Color.WHITE);
-            this.btnArr[posY][posX].setText(""+this.gameBoard[posY][posX]);
+            if(this.gameBoard[posY][posX]==0)
+                this.btnArr[posY][posX].setText(" ");
+            else
+                this.btnArr[posY][posX].setText(""+this.gameBoard[posY][posX]);
             this.btnArr[posY][posX].getModel().setPressed(true);
             this.dataBoard[posY][posX]=this.gameBoard[posY][posX];
             if(this.gameBoard[posY][posX]==0)
@@ -348,13 +346,9 @@ public class FirstClass implements ActionListener , MouseListener{
             }
                 //Image photo=new ImageIcon(this.getClass().getResource("C:\\Users\\melli\\Documents\\NetBeansProjects\\Minesweeper\\src\\main\\java\\image\\numbers\\one.png")).getImage();
                 //this.btnArr[posY][posY].setIcon((Icon) photo);
-                recommendStep();
-
+                //recommendStep();
         }
-        
-
     }
-
     
     private void rightClick(int posY,int posX){
         
@@ -400,6 +394,7 @@ public class FirstClass implements ActionListener , MouseListener{
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        lastStep=seconds;
         //mb.add(new JMenu("Test"));
         //mb.removeAll();
         

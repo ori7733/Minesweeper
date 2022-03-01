@@ -17,7 +17,7 @@ public class TheMain {
      */
     public static void main(String[] args) {
         //new Intro().setVisible(true);
-        new FirstClass(12, 12,1);
+        new FirstClass(18, 18,3);
         
         
     }

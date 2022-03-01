@@ -27,6 +27,7 @@ private int columns=5,rows=5;
     private void initComponents() {
 
         jTextField3 = new javax.swing.JTextField();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jButton1 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         textField1 = new java.awt.TextField();
@@ -35,6 +36,8 @@ private int columns=5,rows=5;
         jTextField2 = new javax.swing.JTextField();
 
         jTextField3.setText("jTextField3");
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -226,6 +229,7 @@ private int columns=5,rows=5;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
