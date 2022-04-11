@@ -27,13 +27,15 @@ public class FirstClass implements ActionListener , MouseListener{
     private int lineX;
     private int[][] gameBoard;
     private int[][] dataBoard;
-    private int remainingMines;
+    private int remainingMines; // the mines that undiscoverd
     private final int boom=9;
-    private int numToDiscovered;
+    private final int flag=-2;
+    private final int notPressed=-1;
+    private int numToDiscovered;// the spot that undiscoverd
     private int level;
-    private JFrame frame;
-    private JButton[][] btnArr;
-    private boolean firstStep=true;
+    private JFrame frame;// the game frame
+    private JButton[][] btnArr;// the buttens array
+    private boolean firstStep=true;// if it's the first step in the game
     private JMenuBar mb;
     private JMenu file;
     private int lastStep=0;
@@ -53,10 +55,10 @@ public class FirstClass implements ActionListener , MouseListener{
         public void actionPerformed(ActionEvent e) {
 
             frame.setTitle(getTimerSt()+ "  mines : "+remainingMines);     
-            if(seconds-lastStep>5){
-                recommendStep();
+            //if(seconds-lastStep>5){
+                allRecommendStep();
                 lastStep=seconds;
-            }
+            //}
             //frame.setMenuBar(getTimerSt()+ "  mines : "+remainingMines);
             /*
             mb=new JMenuBar();
@@ -79,6 +81,7 @@ public class FirstClass implements ActionListener , MouseListener{
             return (hours_string + ":" + minutes_string + ":" + seconds_string);
             
     }
+    
 
     public FirstClass(int X,int Y,int level){
         this.lineY=X;
@@ -151,7 +154,7 @@ public class FirstClass implements ActionListener , MouseListener{
     
     //
     private void newGame(int level){
-        resetBoard(this.dataBoard,-1);
+        resetBoard(this.dataBoard,notPressed);
         resetBoard(this.gameBoard,0);
         int minesAmount=(lineY*lineX/level);
         this.numToDiscovered=lineY*lineX-minesAmount;
@@ -272,7 +275,7 @@ public class FirstClass implements ActionListener , MouseListener{
             for (int j = x-1; j < x+2; j++){
                 if ((i<0||i>lineY-1||j<0||j>lineX-1)||(y==i&&x==j))          
                 continue;
-                    if(this.gameBoard[i][j]==0&&this.dataBoard[i][j]==-1){
+                    if(this.gameBoard[i][j]==0&&this.dataBoard[i][j]==notPressed){
                         this.dataBoard[i][j]=0;
                         this.btnArr[i][j].setBackground(Color.WHITE);
                         this.btnArr[i][j].setText(" ");
@@ -329,7 +332,7 @@ public class FirstClass implements ActionListener , MouseListener{
             this.frame.setVisible(false);
             }
         else{
-            if(this.dataBoard[posY][posX]==-1)
+            if(this.dataBoard[posY][posX]==notPressed)
                 this.numToDiscovered--;
             this.btnArr[posY][posX].setBackground(Color.WHITE);
             if(this.gameBoard[posY][posX]==0)
@@ -356,14 +359,14 @@ public class FirstClass implements ActionListener , MouseListener{
         if(this.btnArr[posY][posX].getBackground()==Color.ORANGE)
             this.btnArr[posY][posX].setBackground(new JButton().getBackground());
         //System.out.println(getTimerSt());
-        if (this.dataBoard[posY][posX]!=-2&&remainingMines>0){
+        if (this.dataBoard[posY][posX]!=flag&&remainingMines>0){
             this.btnArr[posY][posX].setText("F");
-            this.dataBoard[posY][posX]=-2;
+            this.dataBoard[posY][posX]=flag;
             this.remainingMines--;
         }
-            else if (this.dataBoard[posY][posX]==-2){
+            else if (this.dataBoard[posY][posX]==flag){
                 this.btnArr[posY][posX].setText(" ");
-                this.dataBoard[posY][posX]=-1;
+                this.dataBoard[posY][posX]=notPressed;
                 this.remainingMines++;
             }
         if(this.remainingMines==0){
@@ -371,7 +374,7 @@ public class FirstClass implements ActionListener , MouseListener{
             //printBoard(dataBoard);
             for (int i = 0; i < lineY; i++){
                 for (int j = 0; j < lineX; j++){
-                    if(this.dataBoard[i][j]==-2&&this.gameBoard[i][j]!=boom){
+                    if(this.dataBoard[i][j]==flag&&this.gameBoard[i][j]!=boom){
                         winnerBool=false;
                         break;
                     }
@@ -395,6 +398,7 @@ public class FirstClass implements ActionListener , MouseListener{
     @Override
     public void mouseClicked(MouseEvent e) {
         lastStep=seconds;
+        allRecommendStep();
         //mb.add(new JMenu("Test"));
         //mb.removeAll();
         
@@ -406,9 +410,9 @@ public class FirstClass implements ActionListener , MouseListener{
         i= Integer.parseInt( e.getComponent().getName());
         posY = i/lineX;
         posX= i%lineX;
-        if (e.getButton() == 3&&(this.dataBoard[posY][posX]==-1||this.dataBoard[posY][posX]==-2))// if right click on unpresed btn
+        if (e.getButton() == 3&&(this.dataBoard[posY][posX]==notPressed||this.dataBoard[posY][posX]==-2))// if right click on unpresed btn
                     rightClick(posY, posX);
-                else  if(this.dataBoard[posY][posX]==-1)// if left click
+                else  if(this.dataBoard[posY][posX]==notPressed)// if left click
                     leftClick(posY, posX);
         
     }
@@ -432,6 +436,67 @@ public class FirstClass implements ActionListener , MouseListener{
     public void mouseExited(MouseEvent e) {
    //     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
+    private void automaticSolve(){
+        
+    }
+    private void allRecommendStep(){
+        for (int posY = 0; posY < lineY; posY++) 
+            for (int posX = 0; posX < lineX; posX++) {
+                if(this.dataBoard[posY][posX]>0)
+                {
+                    allRecommendFUCK(posY,posX,this.dataBoard[posY][posX]);
+                        
+                }
+            }
+    }
+    private void allRecommendFUCK(int posY,int posX,int number){
+        int count=0;
+        for (int i = posY-1; i < posY+2; i++) 
+            for (int j = posX-1; j < posX+2; j++){
+                if ((i<0||i>lineY-1||j<0||j>lineX-1)||(posY==i&&posX==j||dataBoard[i][j]>-1))          
+                    continue;
+                count++;
+        }
+        if(number==count)
+        for (int i = posY-1; i < posY+2; i++){
+            for (int j = posX-1; j < posX+2; j++){
+                if ((i<0||i>lineY-1||j<0||j>lineX-1)||(posY==i&&posX==j||dataBoard[i][j]!=-1||this.btnArr[i][j].getBackground()==Color.ORANGE))          
+                    continue;
+                rightClick(i, j);
+            }
+        }
+        openAllStep();
+        
+    }
+            
 
-    
+    private void openAllStep(){
+        for (int posY = 0; posY < lineY; posY++) 
+            for (int posX = 0; posX < lineX; posX++) {
+                if(this.dataBoard[posY][posX]>0)
+                {
+                    openAllStepFuck(posY,posX,this.dataBoard[posY][posX]);
+                        
+                }
+        }
+        
+    }
+
+    private void openAllStepFuck(int posY, int posX, int number) {
+        int countFlegs=0;
+        for (int i = posY-1; i < posY+2; i++) 
+            for (int j = posX-1; j < posX+2; j++){
+                if ((i<0||i>lineY-1||j<0||j>lineX-1)||(posY==i&&posX==j||dataBoard[i][j]!=-2))       
+                    continue;
+                countFlegs++;
+        }
+        if(number==countFlegs)
+        for (int i = posY-1; i < posY+2; i++){
+            for (int j = posX-1; j < posX+2; j++){
+                if ((i<0||i>lineY-1||j<0||j>lineX-1)||(posY==i&&posX==j||dataBoard[i][j]==-2||this.btnArr[i][j].getBackground()==Color.ORANGE))          
+                    continue;
+                leftClick(i, j);
+            }
+        }
+    }
 }
