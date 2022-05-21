@@ -36,6 +36,8 @@ public class FirstClass implements ActionListener , MouseListener{
     private JFrame frame;// the game frame
     private JButton[][] btnArr;// the buttens array
     private boolean firstStep=true;// if it's the first step in the game
+    private int gameHelp=1;
+    private int gameSolver=0;
     private JMenuBar mb;
     private JMenu file;
     private int lastStep=0;
@@ -445,7 +447,8 @@ public class FirstClass implements ActionListener , MouseListener{
                 if(this.dataBoard[posY][posX]>0)
                 {
                     allRecommendFUCK(posY,posX,this.dataBoard[posY][posX]);
-                        
+                    if(gameHelp==1)
+                        break;
                 }
             }
     }

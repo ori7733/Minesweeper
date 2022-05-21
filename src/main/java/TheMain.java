@@ -1,4 +1,5 @@
 
+import java.util.LinkedList;
 import javax.swing.JOptionPane;
 
 /*
@@ -18,7 +19,11 @@ public class TheMain {
     public static void main(String[] args) {
         //new Intro().setVisible(true);
         new FirstClass(20, 24,2);
-        
+       /*LinkedList<Integer> linkedList=new LinkedList<Integer>();
+           for (int i = 0; i < 10; i++) 
+           linkedList.add(i+5);
+           System.out.println(linkedList.get(4));
+           System.out.println(linkedList);*/
         
     }
     public static void startGame(){
@@ -45,6 +50,7 @@ public class TheMain {
           FirstClass a=new FirstClass(lineY,lineX,level);
           //FirstClass b=new FirstClass(lineY,lineX,level);
            // FirstClass a=new FirstClass(8,8,4);
+           
             
     
     }
