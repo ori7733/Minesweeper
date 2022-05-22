@@ -17,6 +17,7 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.util.LinkedList;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -36,11 +37,12 @@ public class FirstClass implements ActionListener , MouseListener{
     private JFrame frame;// the game frame
     private JButton[][] btnArr;// the buttens array
     private boolean firstStep=true;// if it's the first step in the game
-    private int gameHelp=1;
+    private int gameHelp=0;
     private int gameSolver=0;
     private JMenuBar mb;
     private JMenu file;
     private int lastStep=0;
+    private LinkedList<Step> stepLink;
 
     int elapsedTime = 0;
     int seconds = 0;
@@ -58,6 +60,7 @@ public class FirstClass implements ActionListener , MouseListener{
 
             frame.setTitle(getTimerSt()+ "  mines : "+remainingMines);     
             //if(seconds-lastStep>5){
+            if(gameSolver==1)
                 allRecommendStep();
                 lastStep=seconds;
             //}
@@ -69,7 +72,7 @@ public class FirstClass implements ActionListener , MouseListener{
             file.setDelay(1);
             file.setBackground(Color.GREEN);
             mb.add(file);
-            */                                       
+            */
         }
     });
     private String getTimerSt(){
@@ -86,12 +89,14 @@ public class FirstClass implements ActionListener , MouseListener{
     
 
     public FirstClass(int X,int Y,int level){
+        new Clock();
         this.lineY=X;
         this.lineX=Y;
         this.gameBoard=new int[lineY][lineX];
         this.dataBoard=new int[lineY][lineX];
         this.btnArr= new JButton[lineY][lineX];
         this.level=setLevel(level);
+        this.stepLink = new LinkedList<Step>();
      //   stopwatch=new Stopwatch();
         newGame(this.level);
         init();
@@ -246,11 +251,15 @@ public class FirstClass implements ActionListener , MouseListener{
     
         
     private void endGame(boolean iswin) {
+        /*for (Step s : stepLink) {
+            System.out.println(s.getString());
+        }*/
         int level;
       //  stopwatch.stop();
       timer.stop();
         String winOrlose;
         if(iswin)
+            
             winOrlose="Good job! Want to play again?";
         else 
             winOrlose="Maybe next time. Want to play again?";
@@ -321,6 +330,7 @@ public class FirstClass implements ActionListener , MouseListener{
         while (this.firstStep&&this.gameBoard[posY][posX]!=0){     
             newGame(level);
         }
+        stepLink.add(new Step(posY, posX,true));
         timer.start();
         this.firstStep=false;
         //System.out.println(getTimerSt());
@@ -357,7 +367,7 @@ public class FirstClass implements ActionListener , MouseListener{
     
     private void rightClick(int posY,int posX){
         
-        
+        stepLink.add(new Step(posY, posX,false));
         if(this.btnArr[posY][posX].getBackground()==Color.ORANGE)
             this.btnArr[posY][posX].setBackground(new JButton().getBackground());
         //System.out.println(getTimerSt());
@@ -400,6 +410,7 @@ public class FirstClass implements ActionListener , MouseListener{
     @Override
     public void mouseClicked(MouseEvent e) {
         lastStep=seconds;
+        if(gameSolver==1)
         allRecommendStep();
         //mb.add(new JMenu("Test"));
         //mb.removeAll();
@@ -412,6 +423,7 @@ public class FirstClass implements ActionListener , MouseListener{
         i= Integer.parseInt( e.getComponent().getName());
         posY = i/lineX;
         posX= i%lineX;
+        
         if (e.getButton() == 3&&(this.dataBoard[posY][posX]==notPressed||this.dataBoard[posY][posX]==-2))// if right click on unpresed btn
                     rightClick(posY, posX);
                 else  if(this.dataBoard[posY][posX]==notPressed)// if left click
